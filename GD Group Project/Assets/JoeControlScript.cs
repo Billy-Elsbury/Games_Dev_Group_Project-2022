@@ -3,13 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class JoeControlScript : MonoBehaviour
+public class JoeControlScript : MonoBehaviour,Health
 {
     enum CharacterStates {Grounded, JumpUp, Falling }
 
     internal Transform myRightHand;
 
-    BombScript joesBomb;
+    PickUP rightHand;
+
+    
+
     CharacterStates joe_state = CharacterStates.Grounded;
     private Vector3 jumping_velocity;
     float start_jump_velocity = 5;
@@ -55,7 +58,7 @@ public class JoeControlScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        current_speed = 0;
 
 
         switch (joe_state)
@@ -68,7 +71,8 @@ public class JoeControlScript : MonoBehaviour
                 if (shouldTurnLeft()) turn_left();
                 if (shouldTurnRight()) turn_right();
                 if (shouldPickUp()) pickUp();
-                if (shouldThrowBomb()) throwBomb();
+                if (shouldUseRight()) useRight();
+                if (shouldFireGun()) FireGun();
                 if (shouldJump()) jump();
                 transform.position += current_speed * transform.forward * Time.deltaTime;
                 break;
@@ -118,25 +122,55 @@ public class JoeControlScript : MonoBehaviour
 
     }
 
-    private void throwBomb()
+    private void FireGun()
     {
-        if (joesBomb) joesBomb.BombThrow(transform.forward, 10);
-        else
-            print("opps no bomb!!!");
+        throw new NotImplementedException();
     }
 
-    private bool shouldThrowBomb()
+    private bool shouldFireGun()
+    {
+        return Input.GetKeyDown(KeyCode.F);
+    }
+
+    private void useRight()
+    {
+        if (rightHand is BombScript )
+        {
+            (rightHand as BombScript).BombThrow(transform.forward, 5);
+            rightHand = null;
+        }
+
+        if (rightHand is GunScript)
+        {
+            (rightHand as GunScript).GunFire();
+        }
+       
+    }
+
+    private bool shouldUseRight()
     {
         return Input.GetKeyDown(KeyCode.T);
     }
 
     private void pickUp()
     {
-       Collider[] allPossibleBombs = Physics.OverlapSphere(transform.position, 1f);
-    foreach (Collider c in allPossibleBombs)
+    Collider[] allPossiblePickUps = Physics.OverlapSphere(transform.position, 1f);
+    foreach (Collider c in allPossiblePickUps)
         {
-            joesBomb = c.transform.GetComponent<BombScript>();
-            joesBomb.IvePickedYou(this);
+            
+            PickUP newItem = c.transform.GetComponent<PickUP>();
+          
+            if (newItem)
+            {   if (rightHand == null)
+                {
+                    rightHand = newItem;
+                    newItem.latestOwner(this);
+                }
+            }
+
+
+
+          
         }
     
     }
@@ -204,5 +238,10 @@ public class JoeControlScript : MonoBehaviour
     private  bool shouldWalkForward()
     {
         return Input.GetKey(KeyCode.W);
+    }
+
+    public void Take_Damage(float damage)
+    {
+        throw new NotImplementedException();
     }
 }
