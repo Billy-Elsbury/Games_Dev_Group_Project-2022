@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using Unity.Netcode;
 public class BombTestScript : MonoBehaviour
 {
     BombScript myBomb;
@@ -20,8 +20,12 @@ public class BombTestScript : MonoBehaviour
         {
           Transform newBomb =  Instantiate(BombTemplate);
           myBomb =  newBomb.GetComponent<BombScript>();
+            NetworkObject nn = newBomb.GetComponent<NetworkObject>();
+
+            nn.Spawn();
+        
             myBomb.transform.position =
-                new Vector3(Random.Range(-10f, 10f), 0f, Random.Range(-10f, 10f));
+                new Vector3(Random.Range(-10f, 10f), 1f, Random.Range(-10f, 10f));
 
 
         }

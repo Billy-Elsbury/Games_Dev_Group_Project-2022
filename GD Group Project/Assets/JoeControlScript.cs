@@ -54,6 +54,7 @@ public class JoeControlScript : NetworkBehaviour,Health
         {
             if (bone.name == "HoldRight")
             {
+
                 return bone;
 
             }
@@ -314,6 +315,6 @@ public class JoeControlScript : NetworkBehaviour,Health
 
     public void Take_Damage(float damage)
     {
-        throw new NotImplementedException();
+        //throw new NotImplementedException();
     }
 }
