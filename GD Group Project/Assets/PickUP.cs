@@ -1,13 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 
-public class PickUP : MonoBehaviour
+public class PickUP : NetworkBehaviour
 {
-
-
-
-
 
     internal enum PickUpItemStates { Waiting, Held, Thrown, Landed, DoYourThing }
     internal PickUpItemStates currentState = PickUpItemStates.Waiting;
@@ -27,8 +24,15 @@ public class PickUP : MonoBehaviour
     internal void latestOwner(JoeControlScript joe)
     {
         currentState = PickUpItemStates.Held;
-        transform.parent = joe.myRightHand;
-        transform.localPosition = Vector3.zero;
-        transform.localRotation = Quaternion.identity;
+
+        if (this.GetComponent<NetworkObject>().TrySetParent(joe.myRightHand, false))
+        {
+
+            //  transform.parent = joe.myRightHand;
+            transform.localPosition = Vector3.zero;
+            transform.localRotation = Quaternion.identity;
+        }
+        else
+            print("Could not set parent");
     }
 }
